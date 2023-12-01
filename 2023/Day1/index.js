@@ -47,100 +47,59 @@ zoneight234
 
 const combineCalibrationValueTwo = (amendedDoc) => {
   const amendedDocLines = amendedDoc.split("\n");
-  //   const regex =
-  //     /\d|(one)|(two)|(three)|(four)|(five)|(six)|(seven)|(eight)|(nine)/g;
-
-  //   const lookUpObj = {
-  //     1: "1",
-  //     one: "1",
-  //     2: "2",
-  //     two: "2",
-  //     3: "3",
-  //     three: "3",
-  //     4: "4",
-  //     four: "4",
-  //     5: "5",
-  //     five: "5",
-  //     6: "6",
-  //     six: "6",
-  //     7: "7",
-  //     seven: "7",
-  //     8: "8",
-  //     eight: "8",
-  //     9: "9",
-  //     nine: "9",
-  //   };
 
   return amendedDocLines.reduce((accumulator, eachLine) => {
-    // const numbers = eachLine.match(regex);
-
-    // const currCharFront = numbers[0];
-    // const calibrationValueNum1 = lookUpObj[currCharFront];
-
-    // const currCharBack = numbers.reverse()[0];
-    // const calibrationValueNum2 = lookUpObj[currCharBack];
-
-    // const finalCalibrationValue = calibrationValueNum1 + calibrationValueNum2;
-
-    // return accumulator + +finalCalibrationValue;
     const numbers = [];
 
     for (let i = 0; i < eachLine.length; i++) {
       const currChar = eachLine[i];
-      if (currChar === "o") {
-        if (eachLine.slice(i, i + 3) === "one") {
+
+      switch (true) {
+        case eachLine.slice(i, i + 3) === "one":
           numbers.push("1");
-        }
-      }
+          break;
 
-      if (currChar === "t") {
-        if (eachLine.slice(i, i + 3) === "two") {
+        case eachLine.slice(i, i + 3) === "two":
           numbers.push("2");
-        }
+          break;
 
-        if (eachLine.slice(i, i + 5) === "three") {
+        case eachLine.slice(i, i + 5) === "three":
           numbers.push("3");
-        }
-      }
+          break;
 
-      if (currChar === "f") {
-        if (eachLine.slice(i, i + 4) === "four") {
+        case eachLine.slice(i, i + 4) === "four":
           numbers.push("4");
-        }
+          break;
 
-        if (eachLine.slice(i, i + 4) === "five") {
+        case eachLine.slice(i, i + 4) === "five":
           numbers.push("5");
-        }
-      }
+          break;
 
-      if (currChar === "s") {
-        if (eachLine.slice(i, i + 3) === "six") {
+        case eachLine.slice(i, i + 3) === "six":
           numbers.push("6");
-        }
+          break;
 
-        if (eachLine.slice(i, i + 5) === "seven") {
+        case eachLine.slice(i, i + 5) === "seven":
           numbers.push("7");
-        }
-      }
+          break;
 
-      if (currChar === "e") {
-        if (eachLine.slice(i, i + 5) === "eight") {
+        case eachLine.slice(i, i + 5) === "eight":
           numbers.push("8");
-        }
-      }
+          break;
 
-      if (currChar === "n") {
-        if (eachLine.slice(i, i + 4) === "nine") {
+        case eachLine.slice(i, i + 4) === "nine":
           numbers.push("9");
-        }
-      }
+          break;
 
-      if (!isNaN(+currChar)) {
-        numbers.push(currChar);
+        case !isNaN(+currChar):
+          numbers.push(currChar);
+          break;
       }
     }
 
-    return accumulator + +(numbers[0] + numbers[numbers.length - 1]);
+    const finalCalibrationValue = numbers[0] + numbers[numbers.length - 1];
+
+    return accumulator + +finalCalibrationValue;
   }, 0);
 };
 
