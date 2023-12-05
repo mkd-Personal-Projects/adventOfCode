@@ -105,21 +105,7 @@ const getLocationTwo = (str) => {
   const sections = str.split("\n\n");
 
   const seedRegex = /\d+/g;
-  const seedData = sections[0].match(seedRegex);
-
-  const seeds = [];
-
-  for (let i = 0; i < seedData.length; i += 2) {
-    const startPoint = +seedData[i];
-    const range = +seedData[i + 1];
-
-    let val = startPoint;
-
-    while (val < startPoint + range) {
-      seeds.push(val);
-      val++;
-    }
-  }
+  const seeds = sections[0].match(seedRegex);
 
   const seedToSoil = sections[1].split("\n");
   seedToSoil.shift();
@@ -142,42 +128,54 @@ const getLocationTwo = (str) => {
   const humidityToLocation = sections[7].split("\n");
   humidityToLocation.shift();
 
-  const lowestVal = seeds.reduce((lowestVal, seed) => {
-    let val = +seed;
+  let seed;
+  let lowestVal = Infinity;
 
-    const getDifference = (map) => {
-      const [valToBe, currVal, range] = map.split(" ").map((num) => +num);
+  for (let i = 0; i < seeds.length; i += 2) {
+    const startPoint = +seeds[i];
+    const range = +seeds[i + 1];
 
-      if (val >= currVal && val <= currVal + range) {
-        val += valToBe - currVal;
+    seed = startPoint;
 
-        return false;
-      }
-      return true;
-    };
+    while (seed < startPoint + range) {
+      let val = seed;
 
-    seedToSoil.every(getDifference);
+      const getDifference = (map) => {
+        const [valToBe, currVal, range] = map.split(" ").map((num) => +num);
 
-    soilToFertilizer.every(getDifference);
+        if (val >= currVal && val <= currVal + range) {
+          val += valToBe - currVal;
 
-    fertilizerToWater.every(getDifference);
+          return false;
+        }
+        return true;
+      };
 
-    waterToLight.every(getDifference);
+      seedToSoil.every(getDifference);
 
-    lightToTemperature.every(getDifference);
+      soilToFertilizer.every(getDifference);
 
-    temperatureToHumidity.every(getDifference);
+      fertilizerToWater.every(getDifference);
 
-    humidityToLocation.every(getDifference);
+      waterToLight.every(getDifference);
 
-    return val < lowestVal ? val : lowestVal;
-  }, Infinity);
+      lightToTemperature.every(getDifference);
+
+      temperatureToHumidity.every(getDifference);
+
+      humidityToLocation.every(getDifference);
+
+      lowestVal = val < lowestVal ? val : lowestVal;
+
+      seed++;
+    }
+  }
 
   return lowestVal;
 };
 
-const sampleOutputTwo = getLocationTwo(sampleData);
-console.log(sampleOutputTwo); //46
+// const sampleOutputTwo = getLocationTwo(sampleData);
+// console.log(sampleOutputTwo); //46
 
 // const outputTwo = getLocationTwo(data);
 // console.log(outputTwo); //
