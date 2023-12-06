@@ -190,14 +190,14 @@ const getLocationTwo = (str) => {
     }
 
     const date = new Date();
-    console.log(`${i * 10}% ${date.getHours()}:${date.getMinutes()}`); // 10:48
+    console.log(`${i * 10}% ${date.getHours()}:${date.getMinutes()}`); // ~6pm
   }
 
   return lowestVal;
 };
 
-const sampleOutputTwo = getLocationTwo(sampleData);
-console.log(sampleOutputTwo); //46
+// const sampleOutputTwo = getLocationTwo(sampleData);
+// console.log(sampleOutputTwo); //46
 
-// const outputTwo = getLocationTwo(data);
-// console.log(outputTwo); //
+const outputTwo = getLocationTwo(data);
+console.log(outputTwo); //
