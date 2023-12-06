@@ -104,8 +104,25 @@ const getLocation = (str) => {
 const getLocationTwo = (str) => {
   const sections = str.split("\n\n");
 
+  const sort = (a, b) => {
+    return +a.start - +b.start;
+  };
+
   const seedRegex = /\d+/g;
-  const seeds = sections[0].match(seedRegex);
+  const unsortedSeeds = sections[0].match(seedRegex);
+
+  const seedsOrganised = [];
+
+  for (let i = 0; i < unsortedSeeds.length; i += 2) {
+    seedsOrganised.push({
+      start: +unsortedSeeds[i],
+      range: +unsortedSeeds[i + 1],
+    });
+  }
+
+  const seeds = seedsOrganised.sort(sort).map((seed) => {
+    return [seed.start, seed.range];
+  });
 
   const seedToSoil = sections[1].split("\n");
   seedToSoil.shift();
@@ -131,13 +148,13 @@ const getLocationTwo = (str) => {
   let seed;
   let lowestVal = Infinity;
 
-  for (let i = 0; i < seeds.length; i += 2) {
-    const startPoint = +seeds[i];
-    const range = +seeds[i + 1];
+  for (let i = 0; i < seeds.length; i++) {
+    const startPoint = seeds[i][0];
+    const range = +seeds[i][1];
 
     seed = startPoint;
 
-    while (seed < startPoint + range) {
+    while (seed <= startPoint + range) {
       let val = seed;
 
       const getDifference = (map) => {
@@ -165,17 +182,22 @@ const getLocationTwo = (str) => {
 
       humidityToLocation.every(getDifference);
 
-      lowestVal = val < lowestVal ? val : lowestVal;
+      if (val < lowestVal) {
+        lowestVal = val;
+      }
 
       seed++;
     }
+
+    const date = new Date();
+    console.log(`${i * 10}% ${date.getHours()}:${date.getMinutes()}`); // 10:48
   }
 
   return lowestVal;
 };
 
-// const sampleOutputTwo = getLocationTwo(sampleData);
-// console.log(sampleOutputTwo); //46
+const sampleOutputTwo = getLocationTwo(sampleData);
+console.log(sampleOutputTwo); //46
 
 // const outputTwo = getLocationTwo(data);
 // console.log(outputTwo); //
