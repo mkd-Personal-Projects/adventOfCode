@@ -1,5 +1,10 @@
 ## AdventOfCode
 
 # 2023
-Day's Completed: 
-[1, 2, 3, 4, 6, 7]
+- [x] Day 1
+- [x] Day 2
+- [x] Day 3
+- [x] Day 4
+- [ ] Day 5
+- [x] Day 6
+- [x] Day 7
