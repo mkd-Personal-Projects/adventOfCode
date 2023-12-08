@@ -38,19 +38,17 @@ const stepsToZ = (str) => {
 
     currentLocation = map[currentLocation][direction];
 
-    // console.log(currentLocation);
-
     if (currentLocation === destination) {
       return step + 1;
     }
   }
 };
 
-const sampleOutputOne = stepsToZ(sampleDataOne);
-console.log(sampleOutputOne); // 2
+// const sampleOutputOne = stepsToZ(sampleDataOne);
+// console.log(sampleOutputOne); // 2
 
-const sampleOutputTwo = stepsToZ(sampleDataTwo);
-console.log(sampleOutputTwo); // 6
+// const sampleOutputTwo = stepsToZ(sampleDataTwo);
+// console.log(sampleOutputTwo); // 6
 
-// const outputOne = stepsToZ(data);
-// console.log(outputOne);
+const outputOne = stepsToZ(data);
+console.log(outputOne);
