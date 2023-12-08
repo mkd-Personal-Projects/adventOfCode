@@ -190,7 +190,7 @@ const getLocationTwo = (str) => {
     }
 
     const date = new Date();
-    console.log(`${i * 10}% ${date.getHours()}:${date.getMinutes()}`); // ~6pm
+    console.log(`${(i + 1) * 10}% ${date.getHours()}:${date.getMinutes()}`); // ~41 hours
   }
 
   return lowestVal;
