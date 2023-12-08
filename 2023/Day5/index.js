@@ -200,4 +200,4 @@ const getLocationTwo = (str) => {
 // console.log(sampleOutputTwo); //46
 
 const outputTwo = getLocationTwo(data);
-console.log(outputTwo); //
+console.log(outputTwo); //69841804
