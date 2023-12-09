@@ -44,14 +44,14 @@ const stepsToZ = (str) => {
   }
 };
 
-// const sampleOutputOne = stepsToZ(sampleDataOne);
-// console.log(sampleOutputOne); // 2
+const sampleOutputOne = stepsToZ(sampleDataOne);
+console.log(sampleOutputOne); // 2
 
-// const sampleOutputTwo = stepsToZ(sampleDataTwo);
-// console.log(sampleOutputTwo); // 6
+const sampleOutputTwo = stepsToZ(sampleDataTwo);
+console.log(sampleOutputTwo); // 6
 
-// const outputOne = stepsToZ(data);
-// console.log(outputOne); //14429
+const outputOne = stepsToZ(data);
+console.log(outputOne); //14429
 
 const sampleDataThree = `LR
 
@@ -80,36 +80,54 @@ const simultaneousStepsToZ = (str) => {
 
   let checkHasReachedDestination = (str) => str.endsWith("Z");
 
-  let currentLocations = Object.keys(map).filter((eachMap) =>
+  const startingLocations = Object.keys(map).filter((eachMap) =>
     eachMap.endsWith("A")
   );
 
-  let step = 0;
+  const stepsToDestinations = startingLocations.reduce(
+    (accumulator, location) => {
+      let step = 0;
 
-  console.log(
-    currentLocations,
-    Object.keys(map).filter((eachMap) => eachMap.endsWith("Z"))
+      let currentLocation = location;
+
+      let hasReachedDestination = false;
+
+      while (!hasReachedDestination) {
+        const direction = directions[step % directions.length];
+
+        step++;
+
+        currentLocation = map[currentLocation][direction];
+
+        if (checkHasReachedDestination(currentLocation)) {
+          hasReachedDestination = true;
+        }
+      }
+
+      return [...accumulator, step];
+    },
+    []
   );
 
-  while (!currentLocations.every(checkHasReachedDestination)) {
-    const direction = directions[step % directions.length];
-
-    currentLocations = currentLocations.map((location) => {
-      return map[location][direction];
-    });
-
-    if (currentLocations.filter(checkHasReachedDestination).length > 3) {
-      console.log(currentLocations);
-    }
-
-    step++;
+  function findGreatestCommonDenominator(a, b) {
+    return !b ? a : findGreatestCommonDenominator(b, a % b);
   }
 
-  return step;
+  function findLowestCommonMultiple(a, b) {
+    return (a * b) / findGreatestCommonDenominator(a, b);
+  }
+
+  let lowestCommonMultiple = Math.min(...stepsToDestinations);
+
+  stepsToDestinations.forEach((num) => {
+    lowestCommonMultiple = findLowestCommonMultiple(lowestCommonMultiple, num);
+  });
+
+  return lowestCommonMultiple;
 };
 
-// const sampleOutputThree = simultaneousStepsToZ(sampleDataThree);
-// console.log(sampleOutputThree); // 6
+const sampleOutputThree = simultaneousStepsToZ(sampleDataThree);
+console.log(sampleOutputThree); // 6
 
 const outputTwo = simultaneousStepsToZ(data);
-console.log(outputTwo); //14429
+console.log(outputTwo); //10921547990923
