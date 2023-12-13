@@ -9,165 +9,175 @@ LJ...`;
 const findFarthestPoint = (str) => {
   const lines = str.split("\n");
 
-  const lineWithS = lines.filter((line) => line.indexOf("S") !== -1)[0];
-  const indexOfLineWithS = lines.indexOf(lineWithS);
-  const strIndexOfS = lineWithS.length * indexOfLineWithS + indexOfLineWithS;
+  const lineLength = lines[0].length;
+  const strIndexOfS = str.indexOf("S");
 
-  const validTopChars = ["7", "F", "|"];
-  const validRightChars = ["7", "J", "-"];
-  const validBottomChars = ["L", "J", "|"];
-  const validLeftChars = ["L", "F", "-"];
+  const validChars = {
+    top: ["7", "F", "|"],
+    right: ["7", "J", "-"],
+    bottom: ["L", "J", "|"],
+    left: ["L", "F", "-"],
+  };
 
   const nextLocations = {
     top: {
-      7: -lineWithS.length - 2,
-      F: -lineWithS.length,
-      "|": -lineWithS.length - 1,
+      7: -1,
+      F: 1,
+      "|": -lineLength - 1,
     },
 
-    right: { 7: lineWithS.length + 2, J: -lineWithS.length, "-": 1 },
+    right: { 7: lineLength + 1, J: -lineLength - 1, "-": 1 },
 
     bottom: {
-      L: lineWithS.length + 2,
-      J: lineWithS.length,
-      "|": lineWithS.length + 1,
+      L: 1,
+      J: -1,
+      "|": lineLength + 1,
     },
 
-    left: { F: lineWithS.length, L: -lineWithS.length - 2, "-": -1 },
+    left: { F: lineLength + 1, L: -lineLength - 1, "-": -1 },
   };
 
-  const checkIsValidTop = (i) =>
-    validTopChars.includes(str[i + nextLocations.top["|"]]);
+  const checkIsValid = (i, direction) => {
+    const key = direction === "top" || direction === "bottom" ? "|" : "-";
 
-  const checkIsValidRight = (i) =>
-    validRightChars.includes(str[i + nextLocations.right["-"]]);
-
-  const checkIsValidBottom = (i) =>
-    validBottomChars.includes(str[i + nextLocations.bottom["|"]]);
-
-  const checkIsValidLeft = (i) =>
-    validLeftChars.includes(str[i + nextLocations.left["-"]]);
-
-  const checkS = (i) =>
-    [
-      str[i + nextLocations.top["|"]],
-      str[i + nextLocations.right["-"]],
-      str[i + nextLocations.bottom["|"]],
-      str[i + nextLocations.left["-"]],
-    ].some((val) => val === "S");
-
-  const updateIndex = (direction) => {
-    let key = direction === "top" || direction === "bottom" ? "|" : "-";
-    return nextLocations[direction][
-      str[[currIndex + nextLocations[direction][key]]]
-    ];
+    return validChars[direction].includes(
+      str[i + nextLocations[direction][key]]
+    );
   };
 
-  let currIndex;
-  let prevIndex;
+  const updateDirection = (direction, currChar) => {
+    if (direction === "top") {
+      if (currChar === "7") {
+        direction = "left";
+      } else if (currChar === "F") {
+        direction = "right";
+      } else if (currChar === "|") {
+        direction = "top";
+      }
+    } else if (direction === "right") {
+      if (currChar === "7") {
+        direction = "bottom";
+      } else if (currChar === "J") {
+        direction = "top";
+      } else if (currChar === "-") {
+        direction = "right";
+      }
+    } else if (direction === "bottom") {
+      if (currChar === "L") {
+        direction = "right";
+      } else if (currChar === "J") {
+        direction = "left";
+      } else if (currChar === "|") {
+        direction = "bottom";
+      }
+    } else if (direction === "left") {
+      if (currChar === "F") {
+        direction = "bottom";
+      } else if (currChar === "L") {
+        direction = "top";
+      } else if (currChar === "-") {
+        direction = "left";
+      }
+    }
 
-  const obj = {};
+    return direction;
+  };
+
+  let currIndex = strIndexOfS;
+
+  const path = {};
 
   let furthestPipe;
 
-  const populateObj = () => {
+  const populatePath = (direction) => {
     let count = 0;
 
-    while (currIndex !== strIndexOfS) {
-      //   console.log(str[currIndex]);
-      //   console.log(currIndex, " < before change");
+    let currChar = str[currIndex];
 
+    while (currIndex !== strIndexOfS) {
       count++;
 
-      if (obj[currIndex] && obj[currIndex].distance === count) {
+      if (path[count] && path[count].index === currIndex) {
         furthestPipe = count;
       }
 
-      obj[currIndex] = { char: str[currIndex], distance: count };
+      path[count] = { char: str[currIndex], index: currIndex };
 
-      if (
-        checkIsValidTop(currIndex) &&
-        currIndex + updateIndex("top") !== prevIndex
-      ) {
-        prevIndex = currIndex;
-        currIndex += updateIndex("top");
+      const newIndex = currIndex + nextLocations[direction][currChar];
+      const newChar = str[newIndex];
 
-        // console.log(str[currIndex], currIndex, " top");
-      } else if (
-        checkIsValidRight(currIndex) &&
-        currIndex + updateIndex("right") !== prevIndex
-      ) {
-        prevIndex = currIndex;
-        currIndex += updateIndex("right");
+      direction = updateDirection(direction, currChar);
 
-        // console.log(str[currIndex], currIndex, " right");
-      } else if (
-        checkIsValidBottom(currIndex) &&
-        currIndex + updateIndex("bottom") !== prevIndex
-      ) {
-        prevIndex = currIndex;
-        currIndex += updateIndex("bottom");
-
-        // console.log(str[currIndex], currIndex, " bottom");
-      } else if (
-        checkIsValidLeft(currIndex) &&
-        currIndex + updateIndex("left") !== prevIndex
-      ) {
-        prevIndex = currIndex;
-        currIndex += updateIndex("left");
-
-        // console.log(str[currIndex], currIndex, " left");
-      } else if (checkS(currIndex)) {
-        currIndex = strIndexOfS;
-      }
-
-      //   console.log(" ");
+      currIndex = newIndex;
+      currChar = newChar;
     }
   };
 
-  if (checkIsValidTop(strIndexOfS)) {
-    let char = str[strIndexOfS + nextLocations.top["|"]];
-    currIndex = strIndexOfS + nextLocations.top[char];
+  if (checkIsValid(strIndexOfS, "top")) {
+    currIndex += nextLocations.top["|"];
 
-    populateObj();
+    populatePath("top");
   }
 
-  if (checkIsValidRight(strIndexOfS)) {
-    let char = str[strIndexOfS + nextLocations.right["-"]];
-    currIndex = strIndexOfS + nextLocations.right[char];
+  if (checkIsValid(strIndexOfS, "right")) {
+    currIndex += nextLocations.right["-"];
 
-    populateObj();
-    console.log("true", obj);
+    populatePath("right");
 
     if (furthestPipe) {
-      return furthestPipe;
+      return { furthestPipe, path };
     }
   }
 
-  if (checkIsValidBottom(strIndexOfS)) {
-    let char = str[strIndexOfS + nextLocations.bottom["|"]];
-    currIndex = strIndexOfS + nextLocations.bottom[char];
+  if (checkIsValid(strIndexOfS, "bottom")) {
+    currIndex += nextLocations.bottom["|"];
 
-    populateObj();
-    console.log("true", obj);
+    populatePath("bottom");
 
     if (furthestPipe) {
-      return furthestPipe;
+      return { furthestPipe, path };
     }
   }
 
-  if (checkIsValidLeft(strIndexOfS)) {
-    let char = str[strIndexOfS + nextLocations.left["-"]];
-    currIndex = strIndexOfS + nextLocations.left[char];
+  if (checkIsValid(strIndexOfS, "left")) {
+    currIndex += nextLocations.left["-"];
 
-    populateObj();
+    populatePath("left");
+
     if (furthestPipe) {
-      return furthestPipe;
+      return { furthestPipe, path };
     }
   }
-
-  console.log(furthestPipe);
 };
 
-const sampleOutput = findFarthestPoint(sampleData);
-// console.log(sampleOutput) //8
+// const { furthestPipe: sampleOutput, path } = findFarthestPoint(sampleData);
+// console.log(sampleOutput); //8
+
+const { furthestPipe: outputOne, path } = findFarthestPoint(data);
+console.log(outputOne); //6701
+
+const indexs = Object.values(path).map(({ index }) => index);
+
+// const lineLength = 6;
+const lineLength = 140;
+
+let top = Math.floor(Math.min(...indexs) / lineLength);
+let left = Infinity;
+
+let bottom = Math.floor(Math.max(...indexs) / lineLength);
+let right = -Infinity;
+
+indexs.forEach((i) => {
+  const line = i % lineLength;
+  // const indexAtLine = line
+
+  if (line < left) {
+    left = line;
+  }
+  if (line > right) {
+    right = line;
+  }
+});
+
+console.log(top, right, bottom, left);
+console.log(data[bottom]);
