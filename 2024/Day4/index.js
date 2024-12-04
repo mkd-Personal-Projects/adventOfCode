@@ -9,32 +9,16 @@ let numOfXmasAppearances = 0;
 let numOfMasInAnXAppearances = 0;
 
 const indexUpdater = (lineIndex, index, direction) => {
-  if (direction === "North") {
+  if (direction.includes("North")) {
     lineIndex--;
   }
-  if (direction === "NorthEast") {
-    lineIndex--;
+  if (direction.includes("East")) {
     index++;
   }
-  if (direction === "East") {
-    index++;
-  }
-  if (direction === "SouthEast") {
-    lineIndex++;
-    index++;
-  }
-  if (direction === "South") {
+  if (direction.includes("South")) {
     lineIndex++;
   }
-  if (direction === "SouthWest") {
-    lineIndex++;
-    index--;
-  }
-  if (direction === "West") {
-    index--;
-  }
-  if (direction === "NorthWest") {
-    lineIndex--;
+  if (direction.includes("West")) {
     index--;
   }
 
@@ -65,25 +49,19 @@ const checkXmasWord = (lineIndex, index, direction) => {
   }
 };
 
-let canCheckNorth = false;
-let canCheckEast = true;
-let canCheckSouth = true;
-let canCheckWest = true;
-
 lines.forEach((line, lineIndex) => {
-  if (lineIndex > 2) canCheckNorth = true;
-  else canCheckNorth = false;
+  let canCheckNorth = false;
+  let canCheckEast = false;
+  let canCheckSouth = false;
+  let canCheckWest = false;
 
+  if (lineIndex > 2) canCheckNorth = true;
   if (lineIndex < linesLength - 3) canCheckSouth = true;
-  else canCheckSouth = false;
 
   const letters = line.split("");
   letters.forEach((letter, index) => {
     if (index > 2) canCheckWest = true;
-    else canCheckWest = false;
-
     if (index < linesLength - 3) canCheckEast = true;
-    else canCheckEast = false;
 
     const canCheckNorthEast = canCheckNorth && canCheckEast;
     const canCheckSouthEast = canCheckSouth && canCheckEast;
