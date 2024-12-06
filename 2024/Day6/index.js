@@ -1,4 +1,15 @@
-const { data } = require("./data");
+// const { data } = require("./data");
+
+const data = `....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...`;
 
 const horizontalLines = data.split("\n");
 
@@ -20,7 +31,10 @@ const getGuardPosition = (horizontalLines) => {
   return { char, currentDirection, linePosition, lineNumber };
 };
 
-const getNextCharInfo = ({ currentDirection, linePosition, lineNumber }) => {
+const getNextCharInfo = (
+  { currentDirection, linePosition, lineNumber },
+  horizontalLines
+) => {
   if ("North" === currentDirection) {
     lineNumber--;
   }
@@ -78,11 +92,14 @@ const updateDirection = (
   const updatedChar = nextCharTable[currentDirection];
   const updatedDirection = directionTable[updatedChar];
 
-  const nextCharInfo = getNextCharInfo({
-    currentDirection: updatedDirection,
-    linePosition,
-    lineNumber,
-  });
+  const nextCharInfo = getNextCharInfo(
+    {
+      currentDirection: updatedDirection,
+      linePosition,
+      lineNumber,
+    },
+    horizontalLines
+  );
 
   updatePositionWith(nextCharInfo, updatedChar, horizontalLines);
 };
@@ -114,8 +131,8 @@ const generateGuardPaths = (horizontalLines) => {
   return allXs.length;
 };
 
-const ans1 = generateGuardPaths([...horizontalLines]);
-console.log(ans1);
+// const ans1 = generateGuardPaths([...horizontalLines]);
+// console.log(ans1);
 
 const findGuardPathsInfiniteLoops = (horizontalLines) => {
   let sum = 0;
@@ -124,11 +141,21 @@ const findGuardPathsInfiniteLoops = (horizontalLines) => {
     const currLine = horizontalLines[i];
     for (let j = 0; j < currLine.length; j++) {
       const tempHorisontalLines = [...horizontalLines];
+
+      const currChar = tempHorisontalLines[i][j];
+      const invalidChars = [`#`, ">", "<", "^", "v"];
+      if (invalidChars.includes(currChar)) {
+        continue;
+      }
+
       updatePositionWith(
         { linePosition: j, lineNumber: i },
-        "O",
+        "#",
         tempHorisontalLines
       );
+
+      console.log(tempHorisontalLines.join("\n"));
+      console.log("");
 
       let numOfOccurances = 0;
       let tempLast4Positions = "";
@@ -145,46 +172,47 @@ const findGuardPathsInfiniteLoops = (horizontalLines) => {
         const currPosition = getGuardPosition(tempHorisontalLines);
         updatePositionWith(currPosition, "X", tempHorisontalLines);
 
-        const nextCharInfo = getNextCharInfo(currPosition);
+        const nextCharInfo = getNextCharInfo(currPosition, tempHorisontalLines);
 
         if (!nextCharInfo.char) {
           canKeepGoing = false;
-        } else {
-          if (nextCharInfo.char !== "#") {
-            updatePositionWith(
-              nextCharInfo,
-              currPosition.char,
-              tempHorisontalLines
-            );
-          } else {
-            updateDirection(currPosition, tempHorisontalLines);
-          }
+          break;
         }
 
-        last4Positions.push({
-          x: currPosition.linePosition,
-          y: currPosition.lineNumber,
-        });
+        // console.log(currPosition, tempHorisontalLines);
 
-        if (count % 4 === 0) {
-          const currLast4Positions = JSON.stringify(last4Positions);
-          last4Positions.splice(0);
+        if (nextCharInfo.char !== "#") {
+          updatePositionWith(
+            nextCharInfo,
+            currPosition.char,
+            tempHorisontalLines
+          );
+        } else {
+          updateDirection(currPosition, tempHorisontalLines);
+          last4Positions.push({
+            x: currPosition.linePosition,
+            y: currPosition.lineNumber,
+          });
 
-          if (currLast4Positions === tempLast4Positions) {
-            numOfOccurances++;
-            break;
+          if (last4Positions.length % 4 === 0) {
+            const currLast4Positions = JSON.stringify(last4Positions);
+            last4Positions.splice(0);
+            // console.log(currLast4Positions);
+
+            if (currLast4Positions === tempLast4Positions) {
+              console.log(numOfOccurances);
+              numOfOccurances++;
+              break;
+            }
+
+            tempLast4Positions = currLast4Positions;
           }
-
-          tempLast4Positions = currLast4Positions;
         }
       }
 
-      console.log(
-        numOfOccurances,
-        last4Positions,
-        tempLast4Positions,
-        canKeepGoing
-      );
+      // console.log("");
+      // console.log(tempHorisontalLines.join("\n"));
+      // console.log(numOfOccurances);
     }
   }
 
@@ -192,4 +220,4 @@ const findGuardPathsInfiniteLoops = (horizontalLines) => {
 };
 
 const ans2 = findGuardPathsInfiniteLoops([...horizontalLines]);
-// console.log(ans2)
+console.log(ans2);
