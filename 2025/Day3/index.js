@@ -13,12 +13,6 @@ function getHighestValues(input) {
     const firstNum = Math.max(...batteries.slice(0, batteries.length - 11));
     let currentNumIndex = batteries.join("").indexOf(firstNum);
 
-    console.log(
-      currentNumIndex,
-      firstNum,
-      batteries.slice(0, batteries.length - 12).join("")
-    );
-
     nums += firstNum;
 
     for (let i = 10; i >= 0; i--) {
@@ -32,17 +26,8 @@ function getHighestValues(input) {
       currentNumIndex =
         slicedBatteries.join("").indexOf(currentNum) + currentNumIndex;
 
-      console.log(
-        currentNumIndex,
-        currentNum,
-        slicedBatteries.slice(0, slicedBatteries.length - i).join(""),
-        i
-      );
-
       nums += currentNum;
     }
-
-    console.log(nums, "\n");
 
     sum += +nums;
   }
