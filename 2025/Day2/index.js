@@ -1,5 +1,20 @@
 const { data } = require("./data");
 
+function checkHasSequence(num) {
+  for (let i = 0; i < num.length / 2; i++) {
+    const slicedNum = num.slice(0, i + 1);
+    const regex = new RegExp(`^(${slicedNum})\\1+$`, "g");
+
+    const hasSequence = num.match(regex) !== null;
+
+    if (hasSequence) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function getInvalidIdTotal(input) {
   const idRanges = input.split(",");
 
@@ -10,23 +25,8 @@ function getInvalidIdTotal(input) {
 
     for (let currentId = startId; currentId <= endId; currentId++) {
       const num = currentId.toString();
-      const isOddLength = num.length % 2 === 1;
 
-      if (isOddLength) continue;
-
-      const digits = num.split("");
-      const middleIndex = digits.length / 2;
-
-      const digitsEndHalf = digits.splice(middleIndex, middleIndex);
-
-      let isInvalidID = true;
-
-      for (let i = 0; i < digits.length; i++) {
-        if (digits[i] !== digitsEndHalf[i]) {
-          isInvalidID = false;
-          break;
-        }
-      }
+      const isInvalidID = checkHasSequence(num);
 
       if (isInvalidID) {
         sum += currentId;
@@ -37,47 +37,13 @@ function getInvalidIdTotal(input) {
   return sum;
 }
 
-const testData = `11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862`;
+const testData = `11-22,95-115,998-1012,1188511880-1188511890,222220-222224,
+1698522-1698528,446443-446449,38593856-38593862,565653-565659,
+824824821-824824827,2121212118-2121212124`;
 
 let run = "actual";
-run = "test";
+// run = "test";
 
 const input = run === "actual" ? data : testData;
 
-// console.log(`\n Sum:`, getInvalidIdTotal(input));
-
-function hasSequence(sequence) {
-  let isSequence = true;
-
-  const digits = sequence.split("");
-  const splitDigits = [];
-
-  if (digits.length % 2 === 0) {
-    const middleIndex = digits.length / 2;
-
-    const digitsEndHalf = digits.splice(middleIndex, middleIndex);
-    splitDigits.push(digits, digitsEndHalf);
-  } else if (digits.length % 3 === 0) {
-    const splittingIndex = digits.length / 3;
-
-    const middleHalf = digits.splice(splittingIndex, splittingIndex);
-    const endHalf = digits.splice(splittingIndex, splittingIndex);
-
-    splitDigits.push(digits, middleHalf, endHalf);
-  } else {
-    return digits.every((digit) => digit === digits[0]);
-  }
-
-  for (let i = 0; i < digits.length; i++) {
-    if (splitDigits.some((arr) => arr[i] !== splitDigits[0][i])) {
-      isSequence = false;
-      break;
-    }
-  }
-
-  return isSequence;
-}
-
-console.log("\n", hasSequence("123123123"));
-console.log("\n", hasSequence("1188511885"));
-console.log("\n", hasSequence("1212121212"));
+console.log(`\n Sum:`, getInvalidIdTotal(input));
