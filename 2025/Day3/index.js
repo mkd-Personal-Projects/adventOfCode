@@ -10,30 +10,39 @@ function getHighestValues(input) {
 
     let nums = "";
 
-    const firstNum = Math.max(...batteries.slice(0, batteries.length - 12));
+    const firstNum = Math.max(...batteries.slice(0, batteries.length - 11));
     let currentNumIndex = batteries.join("").indexOf(firstNum);
-    console.log(currentNumIndex);
 
-    for (let i = 11; i > 0; i--) {
+    console.log(
+      currentNumIndex,
+      firstNum,
+      batteries.slice(0, batteries.length - 12).join("")
+    );
+
+    nums += firstNum;
+
+    for (let i = 10; i >= 0; i--) {
       currentNumIndex++;
       const slicedBatteries = batteries.slice(currentNumIndex);
 
-      const currentNum = Math.max(...slicedBatteries, batteries.length - i);
+      const currentNum = Math.max(
+        ...slicedBatteries.slice(0, slicedBatteries.length - i)
+      );
 
       currentNumIndex =
         slicedBatteries.join("").indexOf(currentNum) + currentNumIndex;
-      console.log(currentNumIndex, currentNum);
+
+      console.log(
+        currentNumIndex,
+        currentNum,
+        slicedBatteries.slice(0, slicedBatteries.length - i).join(""),
+        i
+      );
+
       nums += currentNum;
     }
 
-    // const firstNum = Math.max(...battries.slice(0, battries.length - 1));
-    // const firstNumIndex = battries.join("").indexOf(firstNum);
-
-    // const secondNum = Math.max(...battries.slice(firstNumIndex + 1));
-
-    // const finalNum = +`${firstNum}${secondNum}`;
-
-    console.log(nums);
+    console.log(nums, "\n");
 
     sum += +nums;
   }
@@ -47,7 +56,7 @@ const testData = `987654321111111
 818181911112111`;
 
 let run = "actual";
-run = "test";
+// run = "test";
 
 const input = run === "actual" ? data : testData;
 
