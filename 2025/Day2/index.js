@@ -78,15 +78,6 @@ function hasSequence(sequence) {
   return isSequence;
 }
 
-/*
-
-Check every two digits if they are the same 
-
-if even check middle same as original
-if odd check by splitting in three ways and if all 3 are the same 
-
-*/
-
 console.log("\n", hasSequence("123123123"));
 console.log("\n", hasSequence("1188511885"));
 console.log("\n", hasSequence("1212121212"));
