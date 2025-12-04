@@ -32,8 +32,6 @@ function getInvalidIdTotal(input) {
         sum += currentId;
       }
     }
-
-    // console.log("\n");
   }
 
   return sum;
@@ -49,18 +47,32 @@ const input = run === "actual" ? data : testData;
 // console.log(`\n Sum:`, getInvalidIdTotal(input));
 
 function hasSequence(sequence) {
-  let isSequence = false;
+  let isSequence = true;
 
   const digits = sequence.split("");
+  const splitDigits = [];
 
-  if (digits.length & (2 === 0)) {
-    //
+  if (digits.length % 2 === 0) {
+    const middleIndex = digits.length / 2;
+
+    const digitsEndHalf = digits.splice(middleIndex, middleIndex);
+    splitDigits.push(digits, digitsEndHalf);
+  } else if (digits.length % 3 === 0) {
+    const splittingIndex = digits.length / 3;
+
+    const middleHalf = digits.splice(splittingIndex, splittingIndex);
+    const endHalf = digits.splice(splittingIndex, splittingIndex);
+
+    splitDigits.push(digits, middleHalf, endHalf);
+  } else {
+    return digits.every((digit) => digit === digits[0]);
   }
 
   for (let i = 0; i < digits.length; i++) {
-    const num = digits[i];
-
-    console.log(digits.indexOf(num));
+    if (splitDigits.some((arr) => arr[i] !== splitDigits[0][i])) {
+      isSequence = false;
+      break;
+    }
   }
 
   return isSequence;
@@ -75,6 +87,6 @@ if odd check by splitting in three ways and if all 3 are the same
 
 */
 
-console.log("\n", hasSequence("123123123"), "\n");
-// console.log("\n", hasSequence("1188511885"))
-// console.log("\n", hasSequence("1212121212"))
+console.log("\n", hasSequence("123123123"));
+console.log("\n", hasSequence("1188511885"));
+console.log("\n", hasSequence("1212121212"));
