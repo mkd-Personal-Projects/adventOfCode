@@ -64,57 +64,44 @@ const testData = `.......S.......
 ...............`;
 
 let run = "actual";
-run = "test";
+// run = "test";
 
 const input = run === "actual" ? data : testData;
 
-// console.log("\n", countTachyonSplits(input));
+console.log("\n", countTachyonSplits(input));
 
 function countTachyonTimelineSplits(input) {
   const lines = input.split("\n");
-  let splitCount = 0;
 
   const startingPoint = lines[0].indexOf("S");
-  const tachyonBeamLocation = startingPoint;
 
-  function traverseTree(lines, tachyonBeamLocation, direction) {
-    let count = 0;
-
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
-
-      if (line[tachyonBeamLocation] === ".") continue;
-
-      console.log(
-        line.slice(0, tachyonBeamLocation - 1) +
-          "|^" +
-          line.slice(tachyonBeamLocation + 1),
-        tachyonBeamLocation
-      );
-
-      count += traverseTree(lines.slice(i + 1), tachyonBeamLocation - 1, -1);
-
-      console.log(
-        line.slice(0, tachyonBeamLocation) +
-          "^|" +
-          line.slice(tachyonBeamLocation + 2),
-        tachyonBeamLocation
-      );
-      count += traverseTree(lines.slice(i + 1), tachyonBeamLocation + 1, 1);
-      break;
-    }
-
-    console.log("\n");
-
-    if (lines.length === 1) return 1 + count;
-    return count;
-  }
-
-  const output = traverseTree(lines.slice(1), tachyonBeamLocation, -1);
-
-  console.log(output);
+  const objectCache = {};
+  const splitCount = traverseTree(lines.slice(1), startingPoint, objectCache);
 
   return splitCount;
+}
+
+function traverseTree(lines, tachyonBeamLocation, objectCache) {
+  if (lines.length === 0) {
+    return 1;
+  }
+
+  let count = 0;
+  const line = lines[0];
+
+  if (line[tachyonBeamLocation] === ".") {
+    count += traverseTree(lines.slice(1), tachyonBeamLocation, objectCache);
+  } else if (objectCache.hasOwnProperty(`${line}-${tachyonBeamLocation}`)) {
+    count += objectCache[`${line}-${tachyonBeamLocation}`];
+  } else {
+    count += traverseTree(lines.slice(1), tachyonBeamLocation - 1, objectCache);
+
+    count += traverseTree(lines.slice(1), tachyonBeamLocation + 1, objectCache);
+
+    objectCache[`${line}-${tachyonBeamLocation}`] = count;
+  }
+
+  return count;
 }
 
 console.log("\n", countTachyonTimelineSplits(input));
